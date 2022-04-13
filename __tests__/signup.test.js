@@ -2,6 +2,7 @@ const pool = require('../lib/utils/pool')
 const setup = require('../data/setup')
 const request = require('supertest');
 const app = require('../lib/app')
+const User = require('../lib/models/User');
 
 
 describe('testing signup', () => {
@@ -34,4 +35,23 @@ describe('testing signup', () => {
 
         expect(res.body).toEqual(expect.arrayContaining([ {...mockUser, id: expect.any(String) }]));
     })
+
+    it('should delete a user', async () => {
+        const mockUser = await User.Signup({
+            name: 'mock user',
+            email: 'mockuser@mail.com'
+        });
+
+        // const user = await request(app).post('/api/v1/users').send(mockUser);
+
+        const res = await request(app).delete(`/api/v1/users/${mockUser.id}`)
+
+        expect(res.body).toEqual({
+            id: expect.any(String),
+            name: 'mock user',
+            email: 'mockuser@mail.com',
+        })
+    })
+
+
 })
